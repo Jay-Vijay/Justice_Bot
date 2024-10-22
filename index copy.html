@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Website with DoJ Chatbot</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f2f0;
+            /* Light cream background */
+        }
+
+        /* Header and Navigation */
+        #header,
+        #navbar {
+            color: white;
+            text-align: center;
+        }
+
+        #header {
+            background-color: #5d4037;
+            /* Dark brown */
+            padding: 20px 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #navbar {
+            display: flex;
+            justify-content: center;
+            background-color: #795548;
+            /* Medium brown */
+            padding: 10px 0;
+        }
+
+        #navbar a {
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        #navbar a:hover {
+            background-color: #5d4037;
+            /* Darker brown on hover */
+            border-radius: 5px;
+        }
+
+        /* Main Content */
+        #main-content {
+            padding: 20px;
+        }
+
+        #intro,
+        #important-links,
+        #notifications {
+            background-color: #ffffff;
+            /* White background */
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            border: 1px solid #d7ccc8;
+            /* Light brown border */
+        }
+
+        #intro {
+            background-color: #efebe9;
+            /* Light beige background */
+        }
+
+        #important-links,
+        #notifications {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            /* Soft shadow */
+        }
+
+        h2 {
+            color: #5d4037;
+            /* Dark brown */
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            margin-bottom: 10px;
+        }
+
+        ul li a {
+            color: #5d4037;
+            /* Dark brown links */
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        ul li a:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        #footer {
+            background-color: #795548;
+            /* Medium brown */
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 20px;
+        }
+
+        /* Chat Container */
+        #chat-container {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 350px;
+            height: 520px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fafafa;
+            /* Light background */
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        #chat-header {
+            background-color: #5d4037;
+            /* Dark brown */
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+            position: relative;
+        }
+
+        #back-button {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            background-color: transparent;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #back-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        #chatbox {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            height: 400px;
+        }
+
+        /* User Input */
+        #user-input {
+            display: flex;
+            padding: 10px;
+            background-color: #ffffff;
+            /* White background */
+            border-top: 1px solid #d7ccc8;
+            /* Light brown border */
+        }
+
+        #user-input input {
+            flex-grow: 1;
+            margin-right: 10px;
+            padding: 5px;
+            border: 1px solid #bdbdbd;
+            border-radius: 3px;
+        }
+
+        #user-input button,
+        .detail-button {
+            background-color: #5d4037;
+            /* Dark brown */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .detail-button {
+            margin-left: 10px;
+            font-size: 0.8em;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        /* Chat Button */
+        #chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1001;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #5d4037;
+            /* Dark brown */
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        #chat-button img {
+            width: 40px;
+            height: 40px;
+        }
+
+        /* Messages */
+        .message {
+            max-width: 80%;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            clear: both;
+        }
+
+        .user-message {
+            background-color: #ffe0b2;
+            /* Light orange for user messages */
+            float: right;
+        }
+
+        .bot-message {
+            background-color: #f5f5f5;
+            /* Very light gray for bot messages */
+            float: left;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .bot-message strong {
+            font-weight: bold;
+        }
+
+        .bot-message ol {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .bot-message li,
+        .bot-message p {
+            margin-bottom: 10px;
+        }
+
+        /* Thinking Animation */
+        .thinking {
+            float: left;
+            background-color: #e0e0e0;
+            padding: 8px 12px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #444;
+            animation: wave 1.3s linear infinite;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: -1.1s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: -0.9s;
+        }
+
+        @keyframes wave {
+            0%,
+            60%,
+            100% {
+                transform: initial;
+            }
+
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Learning Note */
+        #learning-note {
+            font-size: 0.8em;
+            color: #666;
+            text-align: center;
+            padding: 5px;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Add your existing website content here -->
+    <div id="header">
+        Department of Justice, India
+    </div>
+    <div id="navbar">
+        <a href="#">Home</a>
+        <a href="#">About Us</a>
+        <a href="#">Services</a>
+        <a href="#">Legal Resources</a>
+        <a href="#">Contact Us</a>
+    </div>
+    <div id="main-content">
+        <div id="intro">
+            <h2>Welcome to the Department of Justice, India</h2>
+            <p>The Department of Justice under the Ministry of Law and Justice is the oldest limb of the Government of India. We aim to ensure the administration of justice, promote legal reform, and provide accessible and effective legal services to the citizens of India.</p>
+        </div>
+
+        <div id="important-links">
+            <h2>Important Links</h2>
+            <ul>
+                <li><a href="#">Supreme Court of India</a></li>
+                <li><a href="#">High Courts of India</a></li>
+                <li><a href="#">National Legal Services Authority</a></li>
+                <li><a href="#">E-Courts Project</a></li>
+                <li><a href="#">Citizen Charter</a></li>
+            </ul>
+        </div>
+
+        <div id="notifications">
+            <h2>Notifications</h2>
+            <ul>
+                <li><a href="#">Notification on New Judicial Appointments</a></li>
+                <li><a href="#">Update on Pending Cases</a></li>
+                <li><a href="#">Guidelines for Court Proceedings During COVID-19</a></li>
+                <li><a href="#">Important Judgments of the Supreme Court</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer">
+        &copy; 2024 Department of Justice, India. All rights reserved.
+    </div>
+
+    <!-- Chatbot Button -->
+    <button id="chat-button">
+        <img src="chat-icon.png" alt="Chat">
+    </button>
+<--
+    <!-- Chatbot Container -->
+    <div id="chat-container">
+        <div id="chat-header">
+            DoJ Chatbot
+            <button id="back-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 4.5v2.25c4.46 0 8.1 3.64 8.1 8.1s-3.64 8.1-8.1 8.1-8.1-3.64-8.1-8.1H0c0 5.52 4.48 10 10 10s10-4.48 10-10-4.48-10-10-10zm.12 3.45L6.7 9.27c-.16.06-.32.21-.38.37l-1.92 6.12c-.05.15-.02.31.08.43.1.12.26.19.42.18.01 0 .03 0 .05-.01l6.12-1.92c.16-.06.3-.22.37-.38l1.92-6.12c.05-.15.02-.31-.08-.43a.55.55 0 00-.46-.17c-.06.01-.12.03-.17.06zm-3.5 5.57L7.64 17.4c-.11.11-.25.17-.4.17-.1 0-.2-.03-.29-.08-.15-.08-.23-.23-.23-.4 0-.15.06-.3.17-.41l1.02-1.03zm2.8-2.8l-1.54 1.54-1.62-1.62 1.54-1.54 1.62 1.62zM18 0c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z" />
+                </svg>
+            </button>
+        </div>
+        <div id="chatbox">
+            <!-- Messages will appear here -->
+        </div>
+        <div id="user-input">
+            <input type="text" id="user-message" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    
+</body>
+
+</html>
